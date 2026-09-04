@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="64" y2="64">
+      <stop offset="0%" stop-color="#0F5132"/>
+      <stop offset="100%" stop-color="#1B7A4E"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#g)"/>
+  <!-- Crescent -->
+  <path d="M38 14a18 18 0 1 0 0 36 18 18 0 0 1 0-36z" fill="none" stroke="#C9A84C" stroke-width="1.5" opacity="0.4"/>
+  <!-- Path/Road -->
+  <path d="M20 48 Q32 28 44 16" stroke="#C9A84C" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <!-- Star -->
+  <circle cx="44" cy="16" r="2.5" fill="#C9A84C"/>
+  <!-- R -->
+  <text x="24" y="40" font-family="serif" font-size="20" font-weight="700" fill="#FFFDF5" letter-spacing="1">R</text>
+</svg>

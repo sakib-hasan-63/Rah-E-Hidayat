@@ -1,0 +1,17 @@
+{
+  "name": "Rah-e-Hidayat",
+  "short_name": "Rah-e-Hidayat",
+  "description": "Walk the Path of Guidance — A premium Islamic digital platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFDF5",
+  "theme_color": "#0F5132",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
