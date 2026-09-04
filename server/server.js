@@ -76,12 +76,9 @@ app.use(async (req, res, next) => {
     req.path !== '/api/daily-reminder' &&
     mongoose.connection.readyState !== 1
   ) {
-    const isMissingUri = !process.env.MONGODB_URI;
     return res.status(503).json({
       success: false,
-      message: isMissingUri
-        ? 'Database connection failed: MONGODB_URI is not set in Vercel Environment Variables. Please add your MongoDB Atlas URI in Vercel Project Settings.'
-        : 'Database connection failed: Could not reach MongoDB Atlas. Please ensure your MongoDB Atlas cluster is active and Network Access IP whitelist allows 0.0.0.0/0.',
+      message: 'Database connection failed: Could not reach MongoDB Atlas. Please ensure Network Access in MongoDB Atlas allows IP 0.0.0.0/0.',
     });
   }
 

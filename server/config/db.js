@@ -26,13 +26,8 @@ const connectDB = async () => {
     return cached.conn;
   }
 
-  const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/rah-e-hidayat';
-
-  // In production / Vercel, fail early if using localhost fallback
-  if (!process.env.MONGODB_URI && (process.env.VERCEL || process.env.NODE_ENV === 'production')) {
-    console.error('❌ MONGODB_URI environment variable is missing in Vercel! Add MONGODB_URI in Vercel Project Settings.');
-    return null;
-  }
+  const DEFAULT_ATLAS_URI = 'mongodb+srv://rah-e-hidayat:rahehidayat@cluster0.knuylom.mongodb.net/rah-e-hidayat?retryWrites=true&w=majority';
+  const mongoUri = process.env.MONGODB_URI || DEFAULT_ATLAS_URI;
 
   if (!cached.promise) {
     const opts = {
