@@ -1,11 +1,29 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { BookOpen, MessageSquareText, Heart, Flame, Award, LogOut, Settings, ShieldCheck } from 'lucide-react';
-import SectionHeader from '../components/common/SectionHeader';
+import { BookOpen, MessageSquareText, Heart, Flame, Award, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 export default function ProfilePage() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const [savedCount, setSavedCount] = useState(user?.bookmarkCount ?? user?.savedCount ?? 0);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (isAuthenticated) {
+      api.get('/api/bookmarks')
+        .then((res) => {
+          if (isMounted && res.data?.success) {
+            setSavedCount(res.data.count ?? res.data.bookmarks?.length ?? 0);
+          }
+        })
+        .catch(() => {});
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthenticated]);
 
   // Redirect if not authenticated
   if (!isAuthenticated || !user) {
@@ -21,11 +39,35 @@ export default function ProfilePage() {
   const userEmail = user?.email || '';
   const initial = userName.trim().charAt(0).toUpperCase();
 
+  const streak = Number(user?.streakDays || 0);
+  const quranProgress = Number(user?.quranProgress || 0);
+  const hadithRead = Number(user?.hadithRead || 0);
+
   const stats = [
-    { label: 'Quran Progress', value: '12 Surahs', icon: BookOpen, color: 'text-emerald-600 dark:text-emerald-400' },
-    { label: 'Hadith Read', value: '48 Read', icon: MessageSquareText, color: 'text-amber-600 dark:text-amber-400' },
-    { label: 'Saved Items', value: '24 Saved', icon: Heart, color: 'text-rose-600 dark:text-rose-400' },
-    { label: 'Daily Streak', value: '7 Days 🔥', icon: Flame, color: 'text-orange-600 dark:text-orange-400' },
+    {
+      label: 'Quran Progress',
+      value: `${quranProgress} Surahs`,
+      icon: BookOpen,
+      color: 'text-emerald-600 dark:text-emerald-400',
+    },
+    {
+      label: 'Hadith Read',
+      value: `${hadithRead} Read`,
+      icon: MessageSquareText,
+      color: 'text-amber-600 dark:text-amber-400',
+    },
+    {
+      label: 'Saved Items',
+      value: `${savedCount} Saved`,
+      icon: Heart,
+      color: 'text-rose-600 dark:text-rose-400',
+    },
+    {
+      label: 'Daily Streak',
+      value: `${streak} Days${streak > 0 ? ' 🔥' : ''}`,
+      icon: Flame,
+      color: 'text-orange-600 dark:text-orange-400',
+    },
   ];
 
   return (

@@ -12,6 +12,45 @@ const generateToken = (id) => {
   });
 };
 
+// Helper to calculate & update consecutive day streak
+const processUserStreak = (user) => {
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+
+  // If user has no streak recorded or no lastStreakDate/lastLogin
+  const prevDate = user.lastStreakDate || user.lastLogin;
+
+  if (!prevDate) {
+    user.lastStreakDate = now;
+    return false;
+  }
+
+  const lastDateStr = new Date(prevDate).toISOString().slice(0, 10);
+
+  if (todayStr === lastDateStr) {
+    // Already visited/updated today
+    return false;
+  }
+
+  const todayMs = new Date(todayStr).getTime();
+  const lastMs = new Date(lastDateStr).getTime();
+  const diffDays = Math.round((todayMs - lastMs) / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 1) {
+    // Consecutive day visit/login: increment streak
+    user.streakDays = (user.streakDays || 0) + 1;
+    user.lastStreakDate = now;
+    return true;
+  } else if (diffDays > 1) {
+    // Missed at least one day: reset streak according to consecutive day logic
+    user.streakDays = 1;
+    user.lastStreakDate = now;
+    return true;
+  }
+
+  return false;
+};
+
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
@@ -42,13 +81,18 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Create user in MongoDB with default role: 'user'
+    // Create user in MongoDB with default role: 'user' and 0 streak/saved stats
+    const now = new Date();
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       phone: phone || '',
       password,
       role: 'user',
+      streakDays: 0,
+      lastStreakDate: now,
+      quranProgress: 0,
+      hadithRead: 0,
     });
 
     const token = generateToken(user._id);
@@ -64,8 +108,12 @@ exports.register = async (req, res) => {
         phone: user.phone,
         role: user.role,
         avatar: user.avatar,
-        streakDays: user.streakDays,
-        tasbeehCount: user.tasbeehCount,
+        streakDays: 0,
+        tasbeehCount: 0,
+        quranProgress: 0,
+        hadithRead: 0,
+        bookmarkCount: 0,
+        savedCount: 0,
         createdAt: user.createdAt,
       },
     });
@@ -116,10 +164,12 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Update last login
+    // Calculate streak and update last login
+    processUserStreak(user);
     user.lastLogin = Date.now();
     await user.save({ validateBeforeSave: false });
 
+    const bookmarkCount = await Bookmark.countDocuments({ userId: user._id });
     const token = generateToken(user._id);
 
     return res.json({
@@ -133,8 +183,12 @@ exports.login = async (req, res) => {
         phone: user.phone,
         role: user.role,
         avatar: user.avatar,
-        streakDays: user.streakDays,
-        tasbeehCount: user.tasbeehCount,
+        streakDays: user.streakDays || 0,
+        tasbeehCount: user.tasbeehCount || 0,
+        quranProgress: user.quranProgress || 0,
+        hadithRead: user.hadithRead || 0,
+        bookmarkCount: bookmarkCount || 0,
+        savedCount: bookmarkCount || 0,
         lastLogin: user.lastLogin,
         createdAt: user.createdAt,
       },
@@ -158,6 +212,11 @@ exports.getMe = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
+    // Process streak update on daily visit
+    processUserStreak(user);
+    user.lastLogin = Date.now();
+    await user.save({ validateBeforeSave: false });
+
     const bookmarkCount = await Bookmark.countDocuments({ userId: user._id });
 
     return res.json({
@@ -169,9 +228,12 @@ exports.getMe = async (req, res) => {
         phone: user.phone,
         role: user.role,
         avatar: user.avatar,
-        streakDays: user.streakDays,
-        tasbeehCount: user.tasbeehCount,
-        bookmarkCount,
+        streakDays: user.streakDays || 0,
+        tasbeehCount: user.tasbeehCount || 0,
+        quranProgress: user.quranProgress || 0,
+        hadithRead: user.hadithRead || 0,
+        bookmarkCount: bookmarkCount || 0,
+        savedCount: bookmarkCount || 0,
         lastLogin: user.lastLogin,
         createdAt: user.createdAt,
       },
@@ -200,6 +262,7 @@ exports.updateProfile = async (req, res) => {
     }
 
     const updatedUser = await user.save();
+    const bookmarkCount = await Bookmark.countDocuments({ userId: updatedUser._id });
 
     return res.json({
       success: true,
@@ -210,6 +273,13 @@ exports.updateProfile = async (req, res) => {
         email: updatedUser.email,
         phone: updatedUser.phone,
         role: updatedUser.role,
+        avatar: updatedUser.avatar,
+        streakDays: updatedUser.streakDays || 0,
+        tasbeehCount: updatedUser.tasbeehCount || 0,
+        quranProgress: updatedUser.quranProgress || 0,
+        hadithRead: updatedUser.hadithRead || 0,
+        bookmarkCount: bookmarkCount || 0,
+        savedCount: bookmarkCount || 0,
       },
     });
   } catch (error) {
@@ -369,8 +439,12 @@ exports.resetPassword = async (req, res) => {
         phone: user.phone,
         role: user.role,
         avatar: user.avatar,
-        streakDays: user.streakDays,
-        tasbeehCount: user.tasbeehCount,
+        streakDays: user.streakDays || 0,
+        tasbeehCount: user.tasbeehCount || 0,
+        quranProgress: user.quranProgress || 0,
+        hadithRead: user.hadithRead || 0,
+        bookmarkCount: 0,
+        savedCount: 0,
         createdAt: user.createdAt,
       },
     });

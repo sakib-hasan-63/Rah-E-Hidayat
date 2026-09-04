@@ -24,6 +24,10 @@ const footerLinks = {
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
+  const handleScrollTop = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  };
+
   return (
     <footer className="bg-[#0A160D] text-[#A8BBAA] border-t border-white/5 mb-16 lg:mb-0">
       {/* Gold accent line */}
@@ -33,7 +37,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-2 lg:col-span-1">
-            <Link to="/" className="flex items-center gap-3 mb-4">
+            <Link to="/" onClick={handleScrollTop} className="flex items-center gap-3 mb-4">
               <img
                 src="/logo.png"
                 alt="Rah-e-Hidayat"
@@ -98,6 +102,7 @@ export default function Footer() {
                   <li key={link.path}>
                     <Link
                       to={link.path}
+                      onClick={handleScrollTop}
                       className="text-xs text-[#A8BBAA] hover:text-[#F4F1EA] transition-colors"
                     >
                       {link.label}

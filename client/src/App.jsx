@@ -40,6 +40,7 @@ import AdminQuran from './pages/admin/AdminQuran';
 import AdminBookmarks from './pages/admin/AdminBookmarks';
 import AdminFeedback from './pages/admin/AdminFeedback';
 import AdminProfile from './pages/admin/AdminProfile';
+import ScrollToTop from './components/common/ScrollToTop';
 
 export default function App() {
   return (
@@ -47,6 +48,7 @@ export default function App() {
       <AuthProvider>
         <ToastProvider>
           <Router>
+            <ScrollToTop />
             <Routes>
               {/* Main Public & Member Routes */}
               <Route path="/" element={<MainLayout />}>

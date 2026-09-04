@@ -50,7 +50,19 @@ const userSchema = new mongoose.Schema(
     },
     streakDays: {
       type: Number,
-      default: 1,
+      default: 0,
+    },
+    lastStreakDate: {
+      type: Date,
+      default: null,
+    },
+    quranProgress: {
+      type: Number,
+      default: 0,
+    },
+    hadithRead: {
+      type: Number,
+      default: 0,
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
