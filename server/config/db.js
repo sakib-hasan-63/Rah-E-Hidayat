@@ -13,10 +13,17 @@ const connectDB = async () => {
     return await isConnecting;
   }
 
+  const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/rah-e-hidayat';
+
+  // In production / Vercel, fail early if using localhost fallback
+  if (!process.env.MONGODB_URI && (process.env.VERCEL || process.env.NODE_ENV === 'production')) {
+    console.error('❌ MONGODB_URI environment variable is missing! Vercel serverless functions cannot connect to localhost:27017.');
+    return null;
+  }
+
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/rah-e-hidayat';
     isConnecting = mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 8000,
+      serverSelectionTimeoutMS: 5000,
     });
     const conn = await isConnecting;
     isConnecting = null;

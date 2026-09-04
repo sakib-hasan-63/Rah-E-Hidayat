@@ -64,6 +64,20 @@ app.use(async (req, res, next) => {
     adminSeeded = true;
     seedAdmin().catch((err) => console.warn('Admin seed notice:', err.message));
   }
+
+  // If request hits database-dependent API endpoints and DB is disconnected, fail fast with clear guidance
+  if (
+    req.path.startsWith('/api') &&
+    req.path !== '/api/health' &&
+    req.path !== '/api/daily-reminder' &&
+    mongoose.connection.readyState !== 1
+  ) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database connection failed. Please ensure MONGODB_URI is set in Vercel Environment Variables and that MongoDB Atlas Network Access allows 0.0.0.0/0.',
+    });
+  }
+
   next();
 });
 
