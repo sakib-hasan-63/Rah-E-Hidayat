@@ -1,4 +1,10 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+
+// Ensure DNS SRV resolution for MongoDB Atlas works across all environments and ISPs
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch (e) {}
 
 /**
  * Global is used here to maintain a cached connection across hot reloads
