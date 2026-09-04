@@ -3,6 +3,7 @@ const User = require('../models/User');
 
 const protect = async (req, res, next) => {
   let token;
+  const secret = process.env.JWT_SECRET || 'rah-e-hidayat-secure-production-jwt-key-2026';
 
   if (
     req.headers.authorization &&
@@ -10,7 +11,7 @@ const protect = async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, secret);
 
       req.user = await User.findById(decoded.id).select('-password');
 
@@ -31,13 +32,15 @@ const protect = async (req, res, next) => {
 };
 
 const optionalAuth = async (req, res, next) => {
+  const secret = process.env.JWT_SECRET || 'rah-e-hidayat-secure-production-jwt-key-2026';
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
     try {
-      const token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      token = req.headers.authorization.split(' ')[1];
+      const decoded = jwt.verify(token, secret);
       req.user = await User.findById(decoded.id).select('-password');
     } catch {
       // Ignore token error for optional auth
