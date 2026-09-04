@@ -16,7 +16,11 @@ const bookmarkRoutes = require('./routes/bookmarkRoutes');
 const tasbeehRoutes = require('./routes/tasbeehRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 
+const path = require('path');
+
 dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -72,9 +76,12 @@ app.use(async (req, res, next) => {
     req.path !== '/api/daily-reminder' &&
     mongoose.connection.readyState !== 1
   ) {
+    const isMissingUri = !process.env.MONGODB_URI;
     return res.status(503).json({
       success: false,
-      message: 'Database connection failed. Please ensure MONGODB_URI is set in Vercel Environment Variables and that MongoDB Atlas Network Access allows 0.0.0.0/0.',
+      message: isMissingUri
+        ? 'Database connection failed: MONGODB_URI is not set in Vercel Environment Variables. Please add your MongoDB Atlas URI in Vercel Project Settings.'
+        : 'Database connection failed: Could not reach MongoDB Atlas. Please ensure your MongoDB Atlas cluster is active and Network Access IP whitelist allows 0.0.0.0/0.',
     });
   }
 
