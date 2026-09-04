@@ -1,148 +1,169 @@
-# RAH-E-HIDAYAT
-> **“Walk the Path of Guidance.”**
-> Complete Full-Stack MERN Islamic Digital Platform with Quran Reader, Hadith, Duas, Digital Tasbeeh, Prayer Times, Hijri Calendar, User Authentication, and Admin Panel.
+# 🌟 Rah-e-Hidayat (راهِ ہدایت)
+
+> **“Walk the Path of Guidance.”**  
+> A full-stack MERN Islamic digital platform built with care, serenity, and precision. Offers authentic Quran reading with audio recitation, Hadith collections, daily Azkar, supplications, digital Tasbeeh, prayer times, Hijri calendar, user authentication, interactive Islamic quizzes, community feedback, and a protected administrator dashboard.
 
 ---
 
-## 🏛️ System Architecture
+## ✨ Features
+
+* **📖 Holy Quran Reader**: Browse all 114 Surahs with smooth Arabic typography, English translations, reciter selection, and persistent audio playback controls.
+* **🤲 Authentic Duas**: Curated prophetic supplications organized by category, including complete Sayyid al-Istighfar.
+* **🌅 Morning & Evening Azkar**: Essential daily remembrances with complete Arabic text, transliteration, translation, and full-text reading views.
+* **📿 Digital Tasbeeh Counter**: Responsive digital counter with audio/vibration feedback, presets (SubhanAllah, Alhamdulillah, Allahu Akbar), and saved dhikr history.
+* **🕌 Accurate Prayer Times**: Automatic location detection and Indian subcontinent calculation presets with real-time countdown to the next prayer.
+* **📅 Hijri Islamic Calendar**: Interactive lunar Islamic calendar with significant Islamic dates and occasions.
+* **📥 Islamic Downloads**: Printable PDF booklets for Morning/Evening Azkar and 40 Rabbana Duas.
+* **🧠 Islamic Knowledge Quiz**: Interactive quiz with score tracking and full dark/light theme support.
+* **✉️ Contact & Feedback System**: Direct message submission stored securely in MongoDB and instantly visible in the Admin Panel.
+* **🛡️ Secure Admin Panel**:
+  * Real-time metrics overview
+  * User account management and role management
+  * Surah catalog reference
+  * Bookmarks & saved content log
+  * User feedback management (filter by type, mark as read, delete)
+  * Admin security profile management
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 18, Vite, Tailwind CSS, Lucide React Icons, Axios |
+| **Backend** | Node.js, Express.js (Vercel Serverless Ready) |
+| **Database** | MongoDB & Mongoose ODM |
+| **Authentication** | JWT (JSON Web Tokens), bcryptjs password hashing |
+| **Deployment** | Vercel (Single-Project Fullstack Serverless Architecture) |
+
+---
+
+## 📁 Project Structure
 
 ```text
-       USER (Browser / Mobile)
-                 │
-                 ▼
-       REACT CLIENT (Vite + Tailwind CSS + Framer Motion)
-                 │
-                 ▼ REST API (JWT Bearer Token)
-       EXPRESS.JS / NODE.JS BACKEND SERVER (:5000)
-                 │
-                 ▼ Mongoose ODM
-       MONGODB DATABASE (Users, Bookmarks, Tasbeeh Logs)
-                 │
-                 ▼ Role: "admin"
-       PROTECTED ADMIN DASHBOARD (/admin)
+Rah-e-Hidayat/
+├── api/                    # Vercel Serverless Function entrypoint (/api/*)
+│   └── index.js
+├── client/                 # React frontend (Vite)
+│   ├── public/             # Static assets & icons
+│   ├── src/
+│   │   ├── components/     # UI components (Navbar, Footer, Modals, Loaders)
+│   │   ├── context/        # React Contexts (Auth, Theme, Toast)
+│   │   ├── layouts/        # MainLayout & AdminLayout
+│   │   ├── pages/          # Public & Admin pages
+│   │   ├── routes/         # Protected route guards
+│   │   └── services/       # Axios API client
+│   ├── vercel.json         # Client SPA rewrite fallback
+│   └── vite.config.js      # Vite dev server & proxy configuration
+├── server/                 # Express backend API
+│   ├── config/             # MongoDB connection (with serverless pooling)
+│   ├── controllers/        # Auth, Admin, Bookmark, Tasbeeh, Feedback
+│   ├── middleware/         # JWT protection & role authorization
+│   ├── models/             # Mongoose schemas (User, Bookmark, Tasbeeh, Feedback)
+│   ├── routes/             # Express API routes
+│   └── utils/              # Emailer & admin initialization
+├── .env.example            # Safe environment template
+├── .gitignore              # Git ignore rules protecting secrets
+├── package.json            # Root scripts & dependencies
+└── vercel.json             # Vercel deployment & routing configuration
 ```
 
 ---
 
-## 🔑 Administrator Account Setup
-
-When the backend starts for the first time, if no admin exists in the database, it automatically provisions the initial Super Administrator using environment variables.
-
-### Configure Admin Credentials
-Set the following in `server/.env` **before first start**:
-```env
-ADMIN_EMAIL=rah-e-hidayat@gmail.com
-ADMIN_PASSWORD=YourSecurePassword123!
-ADMIN_NAME=Admin
-```
-
-- **Admin Panel URL**: [http://localhost:5173/admin](http://localhost:5173/admin)
-
-> ⚠️ **Security Note**: Change the default admin password immediately in production. Admin credentials are never exposed in the frontend code.
-
-*(Any user registered first in an empty database is also automatically granted the `admin` role).*
-
----
-
-## 🚀 Quick Start Guide
+## 🚀 Local Development Setup
 
 ### 1. Prerequisites
-- **Node.js** (v18 or newer)
-- **MongoDB** (Local MongoDB Community Server on port 27017 or MongoDB Atlas Cloud URI)
+* **Node.js**: v18.0.0 or later
+* **MongoDB**: Local MongoDB instance (port 27017) or a free [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) cluster
 
-### 2. Environment Variables Configuration
-In `server/.env` (see `.env.example` for reference):
+### 2. Clone and Install Dependencies
+```bash
+git clone https://github.com/your-username/Rah-e-Hidayat.git
+cd Rah-e-Hidayat
+
+# Install dependencies for root, client, and server
+npm run install:all
+```
+
+### 3. Configure Environment Variables
+Copy `.env.example` to create your local `.env` file:
+```bash
+cp .env.example .env
+cp server/.env.example server/.env
+```
+
+Open `.env` (and `server/.env`) and fill in your values:
 ```env
 PORT=5000
 NODE_ENV=development
 MONGODB_URI=mongodb://localhost:27017/rah-e-hidayat
-JWT_SECRET=your-strong-secret-key-here
-JWT_EXPIRE=7d
+JWT_SECRET=your_strong_random_jwt_secret
+JWT_EXPIRE=30d
 CLIENT_URL=http://localhost:5173
-
-# Admin Seed Account
-ADMIN_EMAIL=rah-e-hidayat@gmail.com
-ADMIN_PASSWORD=Admin@123456
+ADMIN_EMAIL=rah.e.hidayat1265@gmail.com
+ADMIN_PASSWORD=YourSecurePasswordHere
 ADMIN_NAME=Admin
 ```
 
-*(For MongoDB Atlas, replace `MONGODB_URI` with your connection string: `mongodb+srv://<username>:<password>@cluster0.mongodb.net/rah-e-hidayat?retryWrites=true&w=majority`).*
-
-### 3. Install Dependencies
-From the root directory:
-```powershell
-npm run install:all
-```
-
-### 4. Run Both Frontend & Backend Concurrently
-```powershell
+### 4. Run the Application
+Start both frontend and backend concurrently:
+```bash
 npm run dev
 ```
 
-This starts:
-- 🌐 **Frontend (Vite)**: `http://localhost:5173`
-- ⚙️ **Backend API (Express)**: `http://localhost:5000`
+* 🌐 **Frontend**: `http://localhost:5173`
+* ⚙️ **Backend API**: `http://localhost:5000/api`
+* 🛡️ **Admin Panel**: `http://localhost:5173/admin`
 
 ---
 
-## 🗄️ Where Can I View the Database Data?
+## ☁️ Vercel Deployment
 
-### Option A: MongoDB Compass (Local GUI)
-1. Download and open **MongoDB Compass**.
-2. Connect to: `mongodb://localhost:27017`
-3. Click on the database named `rah-e-hidayat`.
-4. You will see collections:
-   - `users`: Contains user profiles, bcrypt password hashes, and roles (`user` or `admin`).
-   - `bookmarks`: Contains personalized saved Ayahs and Duas per user.
-   - `tasbeehs`: Contains logged dhikr sessions.
+This repository is pre-configured for **single-project deployment on Vercel**. The frontend is built as an optimized Single-Page App, and the Express backend runs automatically as a serverless function under `/api/*`.
 
-### Option B: MongoDB Atlas (Cloud)
-1. Go to [MongoDB Atlas Console](https://cloud.mongodb.com).
-2. Navigate to **Database** → **Browse Collections**.
-3. Select `rah-e-hidayat` database to inspect all records in real time.
+### Deployment Instructions
 
----
+1. **Import Repository to Vercel**:
+   * Connect your GitHub repository in the [Vercel Dashboard](https://vercel.com/new).
+   * Leave **Root Directory** as `./` (the repository root).
 
-## 🛡️ API Endpoints Reference
+2. **Build Settings**:
+   * **Framework Preset**: Vite
+   * **Build Command**: `npm run build`
+   * **Output Directory**: `client/dist`
 
-### Authentication (`/api/auth`)
-| Method | Endpoint | Description | Access |
-|---|---|---|---|
-| `POST` | `/api/auth/register` | Register new user with full name, email/phone, and password | Public |
-| `POST` | `/api/auth/login` | Authenticate user & issue JWT token | Public |
-| `GET` | `/api/auth/me` | Retrieve current authenticated user profile & bookmark count | Private |
-| `PUT` | `/api/auth/profile` | Update user profile and password | Private |
+3. **Environment Variables**:
+   In Vercel **Project Settings $\to$ Environment Variables**, add:
 
-### Admin Management (`/api/admin`)
-| Method | Endpoint | Description | Access |
-|---|---|---|---|
-| `GET` | `/api/admin/stats` | Real-time database analytics (Users, Admins, Bookmarks, Tasbeeh) | Admin Only |
-| `GET` | `/api/admin/users` | Search, filter, and sort all registered users | Admin Only |
-| `PUT` | `/api/admin/users/:id/role` | Promote/demote user between `user` and `admin` | Admin Only |
-| `DELETE` | `/api/admin/users/:id` | Delete user and their associated data from MongoDB | Admin Only |
+   | Variable | Description |
+   |---|---|
+   | `MONGODB_URI` | Your MongoDB Atlas connection string |
+   | `JWT_SECRET` | Strong secret key for signing auth tokens |
+   | `JWT_EXPIRE` | Token expiration (e.g. `30d`) |
+   | `CLIENT_URL` | Your production Vercel URL (e.g. `https://your-project.vercel.app`) |
+   | `ADMIN_EMAIL` | Admin account email (`rah.e.hidayat1265@gmail.com`) |
+   | `ADMIN_PASSWORD` | Password for your initial administrator account |
+   | `ADMIN_NAME` | Display name for admin (`Admin`) |
+   | `NODE_ENV` | Set to `production` |
 
-### Bookmarks (`/api/bookmarks`)
-| Method | Endpoint | Description | Access |
-|---|---|---|---|
-| `GET` | `/api/bookmarks` | Get all personal bookmarks for logged-in user | Private |
-| `POST` | `/api/bookmarks` | Add new bookmark for logged-in user | Private |
-| `DELETE` | `/api/bookmarks/:id` | Remove personal bookmark | Private |
+4. **Atlas Network Access**:
+   * In your **MongoDB Atlas Console** under **Network Access**, ensure `0.0.0.0/0` is allowed so Vercel's serverless nodes can connect.
 
-### Tasbeeh (`/api/tasbeeh`)
-| Method | Endpoint | Description | Access |
-|---|---|---|---|
-| `POST` | `/api/tasbeeh` | Log dhikr session & increment total user tasbeeh counter | Private |
-| `GET` | `/api/tasbeeh` | Get personal tasbeeh history log | Private |
+5. **Deploy**:
+   * Click **Deploy**. Vercel will build the frontend and deploy the serverless API.
 
 ---
 
-## 📁 Key File Locations
+## 🔒 Security & Privacy Guidelines
 
-- **Backend API & Server Entry**: [server/server.js](file:///c:/Users/sakib/OneDrive/Desktop/Rah-e-Hidayat/server/server.js)
-- **MongoDB User Schema**: [server/models/User.js](file:///c:/Users/sakib/OneDrive/Desktop/Rah-e-Hidayat/server/models/User.js)
-- **JWT Protection Middleware**: [server/middleware/auth.js](file:///c:/Users/sakib/OneDrive/Desktop/Rah-e-Hidayat/server/middleware/auth.js)
-- **Role Verification Middleware**: [server/middleware/role.js](file:///c:/Users/sakib/OneDrive/Desktop/Rah-e-Hidayat/server/middleware/role.js)
-- **Auth Context (Frontend)**: [client/src/context/AuthContext.jsx](file:///c:/Users/sakib/OneDrive/Desktop/Rah-e-Hidayat/client/src/context/AuthContext.jsx)
-- **Admin Dashboard UI**: [client/src/pages/admin/AdminDashboard.jsx](file:///c:/Users/sakib/OneDrive/Desktop/Rah-e-Hidayat/client/src/pages/admin/AdminDashboard.jsx)
-- **Admin User Management UI**: [client/src/pages/admin/AdminUsers.jsx](file:///c:/Users/sakib/OneDrive/Desktop/Rah-e-Hidayat/client/src/pages/admin/AdminUsers.jsx)
-- **Quran Surah Reader with Audio**: [client/src/pages/QuranReaderPage.jsx](file:///c:/Users/sakib/OneDrive/Desktop/Rah-e-Hidayat/client/src/pages/QuranReaderPage.jsx)
+* **Never commit `.env` files**: All sensitive secrets (database credentials, JWT keys, SMTP credentials, passwords) must remain in `.env` files which are excluded by `.gitignore`.
+* **Frontend Isolation**: No backend secrets or database URIs are bundled into the client build.
+* **Passwords**: All passwords stored in MongoDB are salted and hashed using `bcryptjs`.
+* **SPA Routing**: Full routing fallback is handled via `vercel.json` to prevent 404 errors on page refresh.
+
+---
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).
+Built with sincerity for the Ummah.

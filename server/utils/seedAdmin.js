@@ -3,7 +3,7 @@ const User = require('../models/User');
 const seedAdmin = async () => {
   try {
     const adminEmail = (process.env.ADMIN_EMAIL || 'rah.e.hidayat1265@gmail.com').toLowerCase().trim();
-    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123456';
+    const adminPassword = process.env.ADMIN_PASSWORD;
     const adminName = process.env.ADMIN_NAME || 'Admin';
 
     // Check if the specific admin email exists
@@ -23,7 +23,11 @@ const seedAdmin = async () => {
     }
 
     if (!admin) {
-      console.log(`🌱 Admin account not found. Seeding initial admin account for ${adminEmail}...`);
+      if (!adminPassword) {
+        console.warn('⚠️ Notice: ADMIN_PASSWORD environment variable is not set. Skipping initial admin seed.');
+        return;
+      }
+      console.log(`🌱 Seeding initial admin account for ${adminEmail}...`);
       admin = await User.create({
         name: adminName,
         email: adminEmail,

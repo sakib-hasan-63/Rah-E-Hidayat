@@ -26,9 +26,13 @@ const resetDatabaseAndSeedAdmin = async () => {
     console.log('🧹 Cleaned up old bookmarks and tasbeeh logs.');
 
     // 3. Create fresh admin account
-    const adminEmail = (process.env.ADMIN_EMAIL || 'rah-e-hidayat@gmail.com').toLowerCase().trim();
-    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123456';
+    const adminEmail = (process.env.ADMIN_EMAIL || 'rah.e.hidayat1265@gmail.com').toLowerCase().trim();
+    const adminPassword = process.env.ADMIN_PASSWORD;
     const adminName = process.env.ADMIN_NAME || 'Admin';
+
+    if (!adminPassword) {
+      throw new Error('ADMIN_PASSWORD environment variable is required to reset database and seed admin');
+    }
 
     const freshAdmin = await User.create({
       name: adminName,
